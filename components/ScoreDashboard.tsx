@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-    CheckCircle2, AlertTriangle, XCircle, ChevronRight,
-    Copy, Check, Layout, Globe, Shield, RefreshCw, Zap, Maximize2, ArrowLeft
+    CheckCircle2, AlertTriangle, XCircle,
+    Check, Shield, Zap, Maximize2, ArrowLeft, Globe
 } from 'lucide-react';
-import { AnalysisResult, BrandSettings, Issue, AssetType, CommunicationContext } from '../types';
-import { translateContent } from '../services/gemini';
+import { AnalysisResult, BrandSettings, AssetType, CommunicationContext } from '../types';
+
 import { VisualAnnotationLayer } from './VisualAnnotationLayer';
 import { cn } from '../utils';
 
@@ -15,8 +15,8 @@ import { cn } from '../utils';
 const getCategoryColor = (category: string) => {
     switch (category) {
         case 'Brand': return { bg: 'bg-[#E2000F]', text: 'text-white', border: 'border-[#E2000F]', shadow: 'shadow-red-500/20' };
-        case 'Compliance': return { bg: 'bg-slate-700', text: 'text-slate-100', border: 'border-slate-700', shadow: 'shadow-slate-500/20' };
-        case 'Cultural': return { bg: 'bg-slate-500', text: 'text-slate-100', border: 'border-slate-500', shadow: 'shadow-slate-500/20' };
+        case 'Compliance': return { bg: 'bg-slate-800', text: 'text-white', border: 'border-slate-800', shadow: 'shadow-slate-500/20' };
+        case 'Cultural': return { bg: 'bg-slate-500', text: 'text-white', border: 'border-slate-500', shadow: 'shadow-slate-500/20' };
         default: return { bg: 'bg-slate-400', text: 'text-white', border: 'border-slate-400', shadow: 'shadow-slate-400/20' };
     }
 };
@@ -82,7 +82,7 @@ const ScoreRing = ({ score }: { score: number }) => {
     );
 };
 
-export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset, brandSettings, originalText = "", assetType = AssetType.DOCUMENT, context, fileUrl, htmlContent, mimeType, visualSlides }) => {
+export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset, originalText = "", assetType = AssetType.DOCUMENT, context, fileUrl, htmlContent, mimeType, visualSlides }) => {
     // ... existing hooks ...
     const [activeFilter, setActiveFilter] = useState<'Brand' | 'Compliance' | 'Cultural'>('Brand');
     const [fixedIssues, setFixedIssues] = useState<Set<string>>(new Set());
@@ -145,12 +145,11 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
     }, [fileUrl, htmlContent]);
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white p-6 flex flex-col items-center">
+        <div className="min-h-screen bg-slate-50 text-slate-900 p-6 flex flex-col items-center">
             {/* BACKGROUND FX */}
-            <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 blur-[100px] rounded-full" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/10 blur-[100px] rounded-full" />
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+            <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-slate-200/40 blur-[100px] rounded-full" />
+                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-red-500/5 blur-[100px] rounded-full" />
             </div>
 
             {/* HEADER */}
@@ -158,27 +157,27 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                 <div className="flex justify-between items-center">
                     <button
                         onClick={onReset}
-                        className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-widest"
+                        className="flex items-center gap-2 text-slate-500 hover:text-[#E2000F] transition-colors text-xs font-bold uppercase tracking-widest"
                     >
                         <ArrowLeft className="h-4 w-4" /> Upload New
                     </button>
 
                     <div className="flex items-center gap-6">
                         {/* BRAND ALIGNMENT SCORE CARD */}
-                        <div className="flex items-center gap-4 px-6 py-2 rounded-2xl bg-slate-900/50 border border-white/5 backdrop-blur shadow-2xl">
+                        <div className="flex items-center gap-4 px-6 py-2 rounded-2xl bg-white border border-slate-200 shadow-xl shadow-slate-200/50">
                             <div className="flex flex-col items-end">
-                                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Brand Alignment</span>
-                                <span className="text-xs font-medium text-slate-500">Score</span>
+                                <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest">Brand Alignment</span>
+                                <span className="text-xs font-medium text-slate-400">Score</span>
                             </div>
                             <ScoreRing score={boostedScore || 0} />
                         </div>
 
                         {/* OVERALL SAFETY STATUS BANNER */}
                         <div className={cn(
-                            "px-6 py-4 rounded-2xl border backdrop-blur-md flex items-center gap-3 shadow-2xl transition-all duration-500",
-                            currentSafetyStatus === 'Unsafe' ? "bg-red-500/10 border-red-500 text-red-100 shadow-red-900/20" :
-                                currentSafetyStatus === 'Caution' ? "bg-amber-500/10 border-amber-500 text-amber-100 shadow-amber-900/20" :
-                                    "bg-emerald-500/10 border-emerald-500 text-emerald-100 shadow-emerald-900/20"
+                            "px-6 py-4 rounded-2xl border backdrop-blur-md flex items-center gap-3 shadow-xl transition-all duration-500",
+                            currentSafetyStatus === 'Unsafe' ? "bg-red-50 border-red-200 text-red-700 shadow-red-200/50" :
+                                currentSafetyStatus === 'Caution' ? "bg-amber-50 border-amber-200 text-amber-700 shadow-amber-200/50" :
+                                    "bg-emerald-50 border-emerald-200 text-emerald-700 shadow-emerald-200/50"
                         )}>
                             {currentSafetyStatus === 'Unsafe' ? <XCircle className="h-8 w-8" /> :
                                 currentSafetyStatus === 'Caution' ? <AlertTriangle className="h-8 w-8" /> :
@@ -200,10 +199,9 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
             <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-8 h-[calc(100vh-280px)] relative z-10">
 
                 {/* LEFT: CONTENT VIEWER (2/3 width) */}
-                <section className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden flex flex-col relative group shadow-2xl">
-                    <div className="absolute inset-0 bg-grid-white/[0.02] pointer-events-none" />
+                <section className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 overflow-hidden flex flex-col relative group shadow-xl shadow-slate-200/40">
 
-                    <div className="p-4 border-b border-white/5 flex justify-between items-center bg-black/40">
+                    <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                         <span className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
                             <Maximize2 className="h-3 w-3" /> {assetType} Analysis View
                         </span>
@@ -217,7 +215,7 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-hidden relative bg-black/20">
+                    <div className="flex-1 overflow-hidden relative bg-slate-50">
                         {/* VISUAL MODE CHECK - Now permissive based on content presence */}
                         {showVisualLayer ? (
                             fileUrl || htmlContent ? (
@@ -240,7 +238,7 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                             )
                         ) : (
                             /* TEXT MODE */
-                            <div className="h-full overflow-y-auto p-8 font-mono text-sm leading-relaxed scrollbar-hide text-slate-300">
+                            <div className="h-full overflow-y-auto p-8 font-mono text-sm leading-relaxed scrollbar-hide text-slate-700 bg-white">
                                 <p className="whitespace-pre-wrap max-w-2xl mx-auto">{originalText}</p>
                             </div>
                         )}
@@ -248,10 +246,10 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                 </section >
 
                 {/* RIGHT: UNIFIED ISSUE STREAM (1/3 width) */}
-                < section className="flex flex-col h-full overflow-hidden bg-slate-900/50 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl" >
+                < section className="flex flex-col h-full overflow-hidden bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/40" >
 
                     {/* FILTER TABS */}
-                    < div className="flex p-1 gap-1 border-b border-white/5 bg-black/20 overflow-x-auto scrollbar-hide" >
+                    < div className="flex p-1 gap-1 border-b border-slate-100 bg-slate-50/50 overflow-x-auto scrollbar-hide" >
                         {
                             ['Brand', 'Compliance', 'Cultural'].map((tab) => {
                                 const colors = getCategoryColor(tab);
@@ -262,8 +260,8 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                                         onClick={() => setActiveFilter(tab as any)}
                                         className={cn(
                                             "flex-1 min-w-[80px] py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all border border-transparent",
-                                            isActive ? cn(colors.bg, "text-white border-white/20") :
-                                                "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                                            isActive ? cn(colors.bg, "text-white border-transparent shadow-md") :
+                                                "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
                                         )}
                                     >
                                         {tab}
@@ -274,11 +272,11 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                     </div >
 
                     {/* METRICS HEADER */}
-                    < div className="px-5 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center" >
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    < div className="px-5 py-3 border-b border-slate-100 bg-white flex justify-between items-center" >
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                             {activeFilter} Issues
                         </span>
-                        <span className="text-xs font-mono font-bold text-white">
+                        <span className="text-xs font-mono font-bold text-slate-900">
                             {sortedIssues.filter(i => !fixedIssues.has(i.id)).length} / {sortedIssues.length}
                         </span>
                     </div >
@@ -292,7 +290,7 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                                 animate={{ opacity: 1, y: 0 }}
                                 className={cn(
                                     "rounded-lg border transition-all cursor-pointer relative group overflow-hidden",
-                                    hoveredIssue === issue.id ? "border-indigo-500/50 bg-white/10 translate-x-1" : "bg-black/40 border-white/5",
+                                    hoveredIssue === issue.id ? "border-[#E2000F] bg-red-50 translate-x-1" : "bg-white border-slate-100 hover:border-slate-300",
                                     fixedIssues.has(issue.id) ? "opacity-40 grayscale" : ""
                                 )}
                                 onMouseEnter={() => setHoveredIssue(issue.id)}
@@ -300,7 +298,7 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                                 onClick={() => setHoveredIssue(issue.id)}
                             >
                                 {/* HEADER */}
-                                <div className="p-3 border-b border-white/5 flex justify-between items-start gap-3">
+                                <div className="p-3 border-b border-slate-100 flex justify-between items-start gap-3">
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 mb-1">
                                             {/* NUMBER BADGE */}
@@ -317,9 +315,9 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                                             ) : (
                                                 <span className="px-1.5 py-0.5 rounded-sm bg-amber-500/20 text-amber-300 border border-amber-500/20 text-[9px] font-bold uppercase tracking-wider">ADVISORY</span>
                                             )}
-                                            <span className="text-[10px] font-bold text-slate-500 uppercase truncate">{issue.category}</span>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase truncate">{issue.category}</span>
                                         </div>
-                                        <h4 className="font-bold text-white text-sm leading-tight truncate">{issue.description}</h4>
+                                        <h4 className="font-bold text-slate-900 text-sm leading-tight truncate">{issue.description}</h4>
                                     </div>
                                     <div className={cn(
                                         "w-6 h-6 rounded flex items-center justify-center shrink-0",
@@ -336,27 +334,27 @@ export const ScoreDashboard: React.FC<ScoreDashboardProps> = ({ result, onReset,
                                 {/* DETAILS */}
                                 <div className="p-3">
                                     {/* Recommended Action Card */}
-                                    <div className="bg-slate-800/80 rounded-lg p-3 border border-white/5 relative overflow-hidden">
+                                    <div className="bg-slate-50 rounded-lg p-3 border border-slate-200 relative overflow-hidden">
                                         <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500" />
 
                                         <div className="flex items-center gap-2 mb-2">
-                                            <Zap className="h-3 w-3 text-emerald-400" />
-                                            <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-100/70">Recommended Fix</span>
+                                            <Zap className="h-3 w-3 text-emerald-600" />
+                                            <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">Recommended Fix</span>
                                         </div>
 
-                                        <p className="text-xs text-slate-200 leading-relaxed font-medium pl-1">
+                                        <p className="text-xs text-slate-600 leading-relaxed font-medium pl-1">
                                             {issue.fix}
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* ACTION FOOTER */}
-                                <div className="px-3 py-2 bg-white/5 border-t border-white/5 flex justify-end">
+                                <div className="px-3 py-2 bg-slate-50 border-t border-slate-100 flex justify-end">
                                     <button
                                         onClick={(e) => { e.stopPropagation(); handleFix(issue.id); }}
                                         className={cn(
                                             "text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors",
-                                            fixedIssues.has(issue.id) ? "text-emerald-400" : "text-indigo-300 hover:text-white"
+                                            fixedIssues.has(issue.id) ? "text-emerald-600" : "text-slate-400 hover:text-[#E2000F]"
                                         )}
                                     >
                                         {fixedIssues.has(issue.id) ? <><Check className="h-3 w-3" /> Resolved</> : "Resolve"}

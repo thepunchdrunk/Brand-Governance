@@ -1,10 +1,9 @@
 
-import React from 'react';
 import { motion } from 'framer-motion';
 
 export const PrismLoader = () => {
     return (
-        <div className="relative w-full h-[120px] flex items-center justify-center gap-8 perspective-1000 overflow-hidden rounded-2xl bg-slate-950/50 backdrop-blur-md border border-white/10">
+        <div className="relative w-full h-[120px] flex items-center justify-center gap-8 perspective-1000 overflow-hidden rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200">
 
             {/* 1. Visual Beam (Blue) */}
             <div className="flex flex-col items-center gap-2">

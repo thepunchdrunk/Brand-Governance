@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { Upload, FileText, FileVideo, ShieldCheck, Globe, Zap, X, Check, MapPin, ChevronDown, Loader2, ArrowLeft } from 'lucide-react';
+import { Upload, ShieldCheck, Globe, Zap, Loader2, ArrowLeft, MapPin } from 'lucide-react';
 import { UploadState, HistoryItem, AudienceScope, AssetType, Modality } from '../types';
 import { ingestAsset } from '../services/ingestion';
 import { InputMethod, getAvailableAssets } from '../utils/ingestionLogic';
@@ -17,19 +17,18 @@ interface ZenUploadProps {
 // --- PRIMITIVES ---
 
 const Card = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={cn("bg-[#151518] border border-white/[0.08] rounded-2xl overflow-visible", className)}>
+    <div className={cn("bg-white border border-slate-200 rounded-2xl overflow-visible shadow-sm", className)}>
         {children}
     </div>
 );
 
-const SelectionPill = ({ label, icon: Icon, selected, onClick, color = "violet" }: any) => {
-    const styles = {
-        violet: selected ? "bg-violet-500/10 border-violet-500/50 text-violet-300" : "bg-white/[0.03] border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.05]",
-        emerald: selected ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-300" : "bg-white/[0.03] border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.05]",
-        amber: selected ? "bg-amber-500/10 border-amber-500/50 text-amber-300" : "bg-white/[0.03] border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.05]"
-    };
+const SelectionPill = ({ label, icon: Icon, selected, onClick }: any) => {
+    // Danfoss Red is the only accent color now
+    const selectedStyle = "bg-[#E2000F]/10 border-[#E2000F]/50 text-[#E2000F]";
+    const unselectedStyle = "bg-slate-50 border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100";
+
     return (
-        <button onClick={onClick} className={cn("flex items-center gap-2.5 px-5 py-4 rounded-xl border text-sm font-semibold transition-all duration-200 w-full justify-center", styles[color as keyof typeof styles])}>
+        <button onClick={onClick} className={cn("flex items-center gap-2.5 px-5 py-4 rounded-xl border text-sm font-semibold transition-all duration-200 w-full justify-center", selected ? selectedStyle : unselectedStyle)}>
             <Icon className="w-5 h-5" />
             {label}
         </button>
@@ -41,12 +40,12 @@ const Select = ({ options, value, onChange, placeholder = "Select..." }: { optio
     <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3 rounded-xl border bg-[#0e0e10] border-white/10 text-white text-sm font-medium focus:outline-none focus:border-violet-500/50 appearance-none cursor-pointer"
-        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
+        className="w-full px-4 py-3 rounded-xl border bg-slate-50 border-slate-200 text-slate-900 text-sm font-medium focus:outline-none focus:border-[#E2000F]/50 appearance-none cursor-pointer"
+        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
     >
-        <option value="" disabled className="bg-[#1a1a1d] text-zinc-400">{placeholder}</option>
+        <option value="" disabled className="bg-white text-slate-400">{placeholder}</option>
         {options.map(opt => (
-            <option key={opt.value} value={opt.value} className="bg-[#1a1a1d] text-white">{opt.label}</option>
+            <option key={opt.value} value={opt.value} className="bg-white text-slate-900">{opt.label}</option>
         ))}
     </select>
 );
@@ -136,67 +135,67 @@ export const ZenUpload: React.FC<ZenUploadProps> = ({ uploadState, setUploadStat
     const stepLabels = ["Content", "Scope", "Asset Type", "Region", "Review"];
 
     return (
-        <div className="min-h-screen w-full bg-[#09090b] text-white selection:bg-violet-500/30 font-sans flex flex-col items-center justify-center p-6">
+        <div className="min-h-screen w-full bg-slate-50 text-slate-900 selection:bg-red-100 font-sans flex flex-col items-center justify-center p-6">
             <div className="w-full max-w-xl">
 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                        <div className="w-8 h-8 rounded-lg bg-[#E2000F] flex items-center justify-center shadow-lg shadow-red-500/20">
                             <Zap className="w-4 h-4 text-white" />
                         </div>
-                        <h1 className="text-xl font-bold tracking-tight text-white">BrandAlign</h1>
+                        <h1 className="text-xl font-bold tracking-tight text-slate-900">BrandAlign</h1>
                     </div>
                 </div>
 
                 {/* Progress Dots */}
                 <div className="flex items-center justify-center gap-2 mb-8">
                     {[1, 2, 3, 4, 5].map(step => (
-                        <div key={step} className={cn("w-2 h-2 rounded-full transition-all", step < activeStep ? "bg-emerald-500" : step === activeStep ? "bg-white w-6" : "bg-zinc-700")} />
+                        <div key={step} className={cn("w-2 h-2 rounded-full transition-all", step < activeStep ? "bg-[#E2000F]" : step === activeStep ? "bg-[#E2000F] w-6" : "bg-slate-300")} />
                     ))}
                 </div>
 
                 {/* Step Label */}
                 <div className="text-center mb-6">
-                    <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Step {activeStep}</span>
-                    <h2 className="text-2xl font-bold text-white mt-1">{stepLabels[activeStep - 1]}</h2>
+                    <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Step {activeStep}</span>
+                    <h2 className="text-2xl font-bold text-slate-900 mt-1">{stepLabels[activeStep - 1]}</h2>
                 </div>
 
                 {/* Single Step Content */}
-                <Card className="p-6 mb-6 overflow-visible">
+                <Card className="p-6 mb-6 overflow-visible border-slate-200 shadow-sm">
 
                     {/* Step 1: Content */}
                     {activeStep === 1 && (
                         <div>
                             <div className="flex gap-2 mb-4">
                                 {[InputMethod.FILE, InputMethod.TEXT].map(m => (
-                                    <button key={m} onClick={() => setInputMethod(m)} className={cn("flex-1 py-2 text-xs font-semibold uppercase tracking-wider transition-colors rounded-lg", inputMethod === m ? "bg-white/10 text-white" : "text-zinc-500 hover:text-zinc-300")}>
+                                    <button key={m} onClick={() => setInputMethod(m)} className={cn("flex-1 py-2 text-xs font-semibold uppercase tracking-wider transition-colors rounded-lg", inputMethod === m ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600")}>
                                         {m === InputMethod.FILE ? "Upload" : "Text"}
                                     </button>
                                 ))}
                             </div>
                             {inputMethod === InputMethod.FILE ? (
                                 <div
-                                    className={cn("h-[180px] rounded-xl border-2 border-dashed bg-[#0e0e10] transition-colors flex flex-col items-center justify-center gap-3 cursor-pointer", isHoveringDrop ? "border-violet-500/50 bg-violet-500/5" : "border-white/[0.08] hover:border-white/[0.15]")}
+                                    className={cn("h-[180px] rounded-xl border-2 border-dashed bg-slate-50 transition-colors flex flex-col items-center justify-center gap-3 cursor-pointer", isHoveringDrop ? "border-[#E2000F]/50 bg-[#E2000F]/5" : "border-slate-200 hover:border-slate-300")}
                                     onDragOver={(e) => { e.preventDefault(); setIsHoveringDrop(true); }}
                                     onDragLeave={() => setIsHoveringDrop(false)}
                                     onDrop={(e) => { e.preventDefault(); setIsHoveringDrop(false); if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]); }}
                                     onClick={() => fileInputRef.current?.click()}
                                 >
                                     <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
-                                    <Upload className="w-8 h-8 text-zinc-500" />
-                                    <p className="text-zinc-400 text-sm">Drop file or click to upload</p>
+                                    <Upload className="w-8 h-8 text-slate-400" />
+                                    <p className="text-slate-500 text-sm">Drop file or click to upload</p>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
                                     <textarea
-                                        className="w-full h-[180px] bg-[#0e0e10] border border-white/[0.08] rounded-xl p-4 text-sm font-mono text-zinc-300 resize-none focus:outline-none focus:border-white/20"
+                                        className="w-full h-[180px] bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-700 resize-none focus:outline-none focus:border-slate-300"
                                         placeholder="Paste your content here..."
                                         value={uploadState.textInput}
                                         onChange={(e) => setUploadState({ ...uploadState, textInput: e.target.value })}
                                     />
                                     {uploadState.textInput && (
-                                        <button onClick={() => setActiveStep(2)} className="w-full py-3 rounded-xl bg-white text-black font-bold text-sm uppercase tracking-wider hover:bg-zinc-200 transition-colors">
+                                        <button onClick={() => setActiveStep(2)} className="w-full py-3 rounded-xl bg-[#E2000F] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#c2000d] transition-colors shadow-lg shadow-red-500/20">
                                             Continue
                                         </button>
                                     )}
@@ -218,10 +217,10 @@ export const ZenUpload: React.FC<ZenUploadProps> = ({ uploadState, setUploadStat
                         <div className="space-y-4 max-h-[280px] overflow-y-auto scrollbar-hide">
                             {Object.entries(availableAssets).map(([category, options]) => (
                                 <div key={category}>
-                                    <span className="text-[10px] font-semibold text-zinc-600 uppercase tracking-wider mb-2 block">{category}</span>
+                                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2 block">{category}</span>
                                     <div className="flex flex-wrap gap-2">
                                         {options.map(opt => (
-                                            <button key={opt.value} onClick={() => handleAssetSelect(opt.value as AssetType)} className={cn("px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border", uploadState.assetType === opt.value ? "bg-white text-zinc-900 border-white shadow-lg" : "bg-white/[0.03] text-zinc-400 border-transparent hover:bg-white/[0.08] hover:text-white")}>
+                                            <button key={opt.value} onClick={() => handleAssetSelect(opt.value as AssetType)} className={cn("px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border", uploadState.assetType === opt.value ? "bg-slate-100 text-slate-900 border-slate-300 shadow-sm" : "bg-white text-slate-500 border-transparent hover:bg-slate-50 hover:text-slate-900")}>
                                                 {opt.label}
                                             </button>
                                         ))}
@@ -237,14 +236,14 @@ export const ZenUpload: React.FC<ZenUploadProps> = ({ uploadState, setUploadStat
                             <div className="grid grid-cols-2 gap-3">
                                 <button
                                     onClick={() => handleRegionSelect("Global")}
-                                    className={cn("flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-semibold transition-all duration-200", uploadState.region === "Global" ? "bg-violet-500/10 border-violet-500/50 text-violet-300" : "bg-white/[0.03] border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.05]")}
+                                    className={cn("flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-semibold transition-all duration-200", uploadState.region === "Global" ? "bg-[#E2000F]/10 border-[#E2000F]/50 text-[#E2000F]" : "bg-slate-50 border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100")}
                                 >
                                     <Globe className="w-4 h-4" />
                                     Global
                                 </button>
                                 <button
                                     onClick={handleRegionalToggle}
-                                    className={cn("flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-semibold transition-all duration-200", uploadState.region && uploadState.region !== "Global" ? "bg-violet-500/10 border-violet-500/50 text-violet-300" : "bg-white/[0.03] border-transparent text-zinc-500 hover:text-zinc-300 hover:bg-white/[0.05]")}
+                                    className={cn("flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-semibold transition-all duration-200", uploadState.region && uploadState.region !== "Global" ? "bg-[#E2000F]/10 border-[#E2000F]/50 text-[#E2000F]" : "bg-slate-50 border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100")}
                                 >
                                     <MapPin className="w-4 h-4" />
                                     Regional
@@ -252,7 +251,7 @@ export const ZenUpload: React.FC<ZenUploadProps> = ({ uploadState, setUploadStat
                             </div>
                             {uploadState.region && uploadState.region !== "Global" && (
                                 <div className="pt-2 animate-in fade-in slide-in-from-top-4 duration-300">
-                                    <label className="text-xs font-medium text-zinc-500 mb-2 block">Select Specific Region</label>
+                                    <label className="text-xs font-medium text-slate-500 mb-2 block">Select Specific Region</label>
                                     <Select
                                         options={REGION_OPTIONS}
                                         value={uploadState.region}
@@ -262,7 +261,7 @@ export const ZenUpload: React.FC<ZenUploadProps> = ({ uploadState, setUploadStat
                                     {uploadState.region && (
                                         <button
                                             onClick={() => setActiveStep(5)}
-                                            className="w-full mt-4 py-3 rounded-xl bg-white text-black font-bold text-sm uppercase tracking-wider hover:bg-zinc-200 transition-colors"
+                                            className="w-full mt-4 py-3 rounded-xl bg-[#E2000F] text-white font-bold text-sm uppercase tracking-wider hover:bg-[#c2000d] transition-colors shadow-lg shadow-red-500/20"
                                         >
                                             Continue
                                         </button>
@@ -276,44 +275,44 @@ export const ZenUpload: React.FC<ZenUploadProps> = ({ uploadState, setUploadStat
                     {activeStep === 5 && (
                         <div className="text-center space-y-6 animate-in fade-in zoom-in-95 duration-300">
                             <div className="space-y-3">
-                                <div className="flex items-center justify-between py-2 border-b border-white/5">
-                                    <span className="text-zinc-500 text-sm">Content</span>
-                                    <span className="text-white text-sm font-medium truncate max-w-[200px]">{uploadState.file?.name || "Text input"}</span>
+                                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                                    <span className="text-slate-500 text-sm">Content</span>
+                                    <span className="text-slate-900 text-sm font-medium truncate max-w-[200px]">{uploadState.file?.name || "Text input"}</span>
                                 </div>
-                                <div className="flex items-center justify-between py-2 border-b border-white/5">
-                                    <span className="text-zinc-500 text-sm">Scope</span>
-                                    <span className="text-white text-sm font-medium">{uploadState.audienceScope}</span>
+                                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                                    <span className="text-slate-500 text-sm">Scope</span>
+                                    <span className="text-slate-900 text-sm font-medium">{uploadState.audienceScope}</span>
                                 </div>
-                                <div className="flex items-center justify-between py-2 border-b border-white/5">
-                                    <span className="text-zinc-500 text-sm">Asset Type</span>
-                                    <span className="text-white text-sm font-medium">{uploadState.assetType}</span>
+                                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                                    <span className="text-slate-500 text-sm">Asset Type</span>
+                                    <span className="text-slate-900 text-sm font-medium">{uploadState.assetType}</span>
                                 </div>
                                 <div className="flex items-center justify-between py-2">
-                                    <span className="text-zinc-500 text-sm">Region</span>
-                                    <span className="text-white text-sm font-medium">{uploadState.region}</span>
+                                    <span className="text-slate-500 text-sm">Region</span>
+                                    <span className="text-slate-900 text-sm font-medium">{uploadState.region}</span>
                                 </div>
                             </div>
 
                             {isAnalyzing ? (
                                 <div className="space-y-2">
-                                    <div className="h-14 w-full bg-[#1a1a1d] rounded-xl border border-white/10 relative overflow-hidden flex items-center justify-center">
+                                    <div className="h-14 w-full bg-slate-50 rounded-xl border border-slate-200 relative overflow-hidden flex items-center justify-center">
                                         <div
-                                            className="absolute inset-y-0 left-0 bg-violet-500/20 transition-all duration-300 ease-out"
+                                            className="absolute inset-y-0 left-0 bg-[#E2000F]/10 transition-all duration-300 ease-out"
                                             style={{ width: `${progress}%` }}
                                         />
                                         <div className="relative z-10 flex items-center gap-3">
-                                            <Loader2 className="w-5 h-5 animate-spin text-violet-400" />
-                                            <span className="text-sm font-bold tracking-widest uppercase text-white">
+                                            <Loader2 className="w-5 h-5 animate-spin text-[#E2000F]" />
+                                            <span className="text-sm font-bold tracking-widest uppercase text-slate-900">
                                                 Analyzing {progress}%
                                             </span>
                                         </div>
                                     </div>
-                                    <p className="text-xs text-center text-zinc-500 animate-pulse">
+                                    <p className="text-xs text-center text-slate-500 animate-pulse">
                                         AI is checking your content against brand guidelines...
                                     </p>
                                 </div>
                             ) : (
-                                <button onClick={onAnalyze} className="w-full py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 bg-white text-black hover:bg-zinc-200">
+                                <button onClick={onAnalyze} className="w-full py-4 rounded-xl font-bold text-sm uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 bg-[#E2000F] text-white hover:bg-[#c2000d] shadow-red-500/20">
                                     <Zap className="w-5 h-5" />
                                     Analyze Content
                                 </button>
@@ -325,7 +324,7 @@ export const ZenUpload: React.FC<ZenUploadProps> = ({ uploadState, setUploadStat
                 {/* Back Button */}
                 {
                     activeStep > 1 && (
-                        <button onClick={goBack} className="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors text-sm font-medium mx-auto">
+                        <button onClick={goBack} className="flex items-center gap-2 text-slate-400 hover:text-slate-600 transition-colors text-sm font-medium mx-auto">
                             <ArrowLeft className="w-4 h-4" />
                             Back
                         </button>

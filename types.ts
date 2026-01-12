@@ -58,6 +58,7 @@ export enum AssetType {
   ONBOARDING_VIDEO = 'Onboarding Video',
   LEADERSHIP_VLOG = 'Leadership Vlog',
   INTERNAL_PODCAST = 'Internal Podcast',
+  PODCAST = 'Podcast',
 
   // Internal L&D
   ELEARNING = 'eLearning Module',
@@ -248,6 +249,7 @@ export interface UploadState {
 }
 
 export interface HistoryItem {
+  id: string;
   box_2d?: number[];
   page_number?: number;
   filename: string;

@@ -1,0 +1,17 @@
+App.tsx(13,41): error TS6133: 'Region' is declared but its value is never read.
+App.tsx(13,127): error TS6133: 'FixIntensity' is declared but its value is never read.
+components/AdminDashboard.tsx(8,5): error TS6133: 'TrendingUp' is declared but its value is never read.
+components/AdminDashboard.tsx(172,185): error TS2322: Type '(value: number) => [string, "Pass Rate"]' is not assignable to type 'Formatter<number, "Pass Rate">'.
+  Types of parameters 'value' and 'value' are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+components/ErrorBoundary.tsx(2,8): error TS6133: 'React' is declared but its value is never read.
+components/Layout.tsx(3,82): error TS6133: 'LogOut' is declared but its value is never read.
+components/PrismLoader.tsx(2,1): error TS6133: 'React' is declared but its value is never read.
+components/ScoreDashboard.tsx(3,18): error TS6133: 'AnimatePresence' is declared but its value is never read.
+components/ScoreDashboard.tsx(8,41): error TS6133: 'Issue' is declared but its value is never read.
+components/ScoreDashboard.tsx(85,82): error TS6133: 'brandSettings' is declared but its value is never read.
+components/ui/Spotlight.tsx(1,35): error TS6133: 'useEffect' is declared but its value is never read.
+components/UploadSection.tsx(480,30): error TS2304: Cannot find name 'ScanEye'.
+services/ingestion.ts(2,10): error TS6133: 'AssetType' is declared but its value is never read.
+vite.config.ts(6,9): error TS6133: 'env' is declared but its value is never read.

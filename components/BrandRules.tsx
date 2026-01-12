@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
     Shield, Lock, Info, Upload, RefreshCw, Link2, FileCheck,
     BookOpen, Mic, PenTool, Globe, ChevronRight, Copy, Check,
-    Download, ExternalLink, Search, History, AlertCircle, AlertTriangle, Layout, Edit2, Save
+    AlertCircle, AlertTriangle, Layout, Edit2, Save
 } from 'lucide-react';
 import { BrandSettings } from '../types';
 import { extractBrandSettings } from '../services/gemini';
@@ -75,20 +75,20 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
         <button
             onClick={() => setActiveTab(id)}
             className={`w-full text-left px-5 py-4 rounded-xl flex items-start justify-between group transition-all duration-200 border ${activeTab === id
-                ? 'bg-indigo-50 border-indigo-200 shadow-sm'
+                ? 'bg-slate-50 border-slate-300 shadow-sm'
                 : 'bg-white border-transparent hover:bg-slate-50 hover:border-slate-200'
                 }`}
         >
             <div className="flex gap-4">
-                <div className={`p-2 rounded-lg h-fit ${activeTab === id ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-indigo-500 transition-colors'}`}>
+                <div className={`p-2 rounded-lg h-fit ${activeTab === id ? 'bg-[#E2000F]/10 text-[#E2000F]' : 'bg-slate-100 text-slate-500 group-hover:bg-white group-hover:text-[#E2000F] transition-colors'}`}>
                     <Icon className="h-5 w-5" />
                 </div>
                 <div>
-                    <span className={`font-bold block text-sm ${activeTab === id ? 'text-indigo-900' : 'text-slate-700'}`}>{label}</span>
+                    <span className={`font-bold block text-sm ${activeTab === id ? 'text-[#E2000F]' : 'text-slate-700'}`}>{label}</span>
                     <span className="text-xs text-slate-500 font-medium mt-0.5 block">{description}</span>
                 </div>
             </div>
-            {activeTab === id && <ChevronRight className="h-5 w-5 text-indigo-400" />}
+            {activeTab === id && <ChevronRight className="h-5 w-5 text-[#E2000F]" />}
         </button>
     );
 
@@ -102,7 +102,7 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => copyToClipboard(content, title)}
-                        className="p-1.5 hover:bg-white rounded-md text-slate-400 hover:text-indigo-600 transition-all border border-transparent hover:border-slate-200 hover:shadow-sm"
+                        className="p-1.5 hover:bg-white rounded-md text-slate-400 hover:text-[#E2000F] transition-all border border-transparent hover:border-slate-200 hover:shadow-sm"
                         title="Copy content"
                     >
                         {copiedSection === title ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
@@ -113,10 +113,10 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
                 <textarea
                     value={formData[fieldKey] as string}
                     onChange={(e) => setFormData({ ...formData, [fieldKey]: e.target.value })}
-                    className="w-full p-8 bg-white font-mono text-sm leading-relaxed text-slate-600 outline-none focus:bg-indigo-50/10 min-h-[200px]"
+                    className="w-full p-8 bg-white font-mono text-sm leading-relaxed text-slate-600 outline-none focus:bg-slate-50 min-h-[200px]"
                 />
             ) : (
-                <div className="p-8 bg-white font-mono text-sm leading-relaxed text-slate-600 whitespace-pre-wrap selection:bg-indigo-100 selection:text-indigo-900">
+                <div className="p-8 bg-white font-mono text-sm leading-relaxed text-slate-600 whitespace-pre-wrap selection:bg-[#E2000F]/20 selection:text-slate-900">
                     {content}
                 </div>
             )}
@@ -134,7 +134,7 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
                         {isEditing && <span className="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-md animate-pulse">Editing Mode</span>}
                     </div>
                     <p className="text-slate-500 mt-2 flex items-center gap-2 text-sm">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 font-bold text-[10px] uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 font-bold text-[10px] uppercase tracking-wide">
                             <Shield className="h-3 w-3" />
                             Enforced
                         </span>
@@ -166,7 +166,7 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
                     ) : (
                         <button
                             onClick={() => setIsEditing(true)}
-                            className="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-indigo-500/20 hover:bg-indigo-500 transition-all flex items-center gap-2"
+                            className="px-4 py-2 bg-[#E2000F] text-white text-sm font-bold rounded-lg shadow-lg shadow-red-500/20 hover:bg-[#c2000d] transition-all flex items-center gap-2"
                         >
                             <Edit2 className="h-4 w-4" />
                             Edit Standards
@@ -206,7 +206,7 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
 
             {/* Sync Control Bar */}
             <div className="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-2">
-                <div className="flex-1 flex items-center bg-slate-50 rounded-xl border border-slate-200 px-4 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-500 transition-all">
+                <div className="flex-1 flex items-center bg-slate-50 rounded-xl border border-slate-200 px-4 focus-within:ring-2 focus-within:ring-[#E2000F]/20 focus-within:border-[#E2000F] transition-all">
                     <Globe className="h-4 w-4 text-slate-400 mr-3" />
                     <input
                         type="text"
@@ -231,7 +231,7 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
                         disabled={isSyncing || !portalUrl}
                         className={`px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all ${isSyncing
                             ? 'bg-slate-100 text-slate-400 cursor-wait'
-                            : 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-500/20'
+                            : 'bg-[#E2000F] text-white hover:bg-[#c2000d] shadow-md shadow-red-500/20'
                             }`}
                     >
                         <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
@@ -303,15 +303,15 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
                         />
                     </nav>
 
-                    <div className="bg-indigo-900 rounded-2xl p-6 text-white relative overflow-hidden group">
+                    <div className="bg-[#E2000F] rounded-2xl p-6 text-white relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                             <Link2 className="h-24 w-24 rotate-12" />
                         </div>
                         <h3 className="font-bold text-lg mb-2 relative z-10">Need Help?</h3>
-                        <p className="text-indigo-200 text-sm mb-4 relative z-10 leading-relaxed">
+                        <p className="text-white/80 text-sm mb-4 relative z-10 leading-relaxed">
                             Contact the Brand Office for clarifications on complex use-cases.
                         </p>
-                        <button className="w-full py-2 bg-white text-indigo-900 rounded-lg font-bold text-xs hover:bg-indigo-50 transition-colors relative z-10">
+                        <button className="w-full py-2 bg-white text-[#E2000F] rounded-lg font-bold text-xs hover:bg-slate-50 transition-colors relative z-10">
                             Open Support Ticket
                         </button>
                     </div>
@@ -357,8 +357,8 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
                                 <p className="text-slate-500">Defining how we speak, write, and interact with the world.</p>
                             </div>
 
-                            <div className="bg-gradient-to-br from-slate-50 to-indigo-50/50 rounded-xl p-6 border border-slate-200 flex items-start gap-4">
-                                <Info className="h-6 w-6 text-indigo-500 mt-1 flex-shrink-0" />
+                            <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl p-6 border border-slate-200 flex items-start gap-4">
+                                <Info className="h-6 w-6 text-[#E2000F] mt-1 flex-shrink-0" />
                                 <div>
                                     <h4 className="font-bold text-slate-800 text-sm mb-1">AI Analysis Instruction</h4>
                                     <p className="text-sm text-slate-600 leading-relaxed">
@@ -386,8 +386,8 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
                                 {['Logo', 'Typography', 'Color'].map(item => (
-                                    <div key={item} className="bg-white p-4 rounded-xl border border-slate-200 text-center hover:border-indigo-300 transition-colors cursor-pointer group">
-                                        <div className="font-bold text-slate-700 group-hover:text-indigo-600">{item}</div>
+                                    <div key={item} className="bg-white p-4 rounded-xl border border-slate-200 text-center hover:border-[#E2000F]/50 transition-colors cursor-pointer group">
+                                        <div className="font-bold text-slate-700 group-hover:text-[#E2000F]">{item}</div>
                                         <div className="text-xs text-slate-400 mt-1">View Assets</div>
                                     </div>
                                 ))}
@@ -411,7 +411,7 @@ export const BrandRules: React.FC<BrandRulesProps> = ({ settings, onSave }) => {
 
                             <div className="bg-red-50 rounded-xl p-6 border border-red-100 flex flex-col gap-4">
                                 <div className="flex items-center gap-3 border-b border-red-200/50 pb-4">
-                                    <AlertCircle className="h-5 w-5 text-red-600" />
+                                    <AlertCircle className="h-5 w-5 text-[#E2000F]" />
                                     <h3 className="font-bold text-red-900">Restricted Terminology Blocklist</h3>
                                 </div>
                                 {isEditing ? (

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Users, Search, MoreHorizontal, Shield, MapPin, UserCheck, UserX, Mail, AlertTriangle, Settings, Lock } from 'lucide-react';
+import { Users, Search, Shield, Mail, Settings, Lock } from 'lucide-react';
 
 const initialUsers = [
     { id: 1, name: 'Jane Doe', email: 'jane.doe@acme.com', role: 'General User', region: 'Global', status: 'Active', riskProfile: 'Low' },
@@ -12,11 +12,11 @@ const initialUsers = [
 
 export const UserManagement: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [users, setUsers] = useState(initialUsers);
+    const [users] = useState(initialUsers);
     const [selectedUser, setSelectedUser] = useState<number | null>(null);
 
-    const filteredUsers = users.filter(user => 
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const filteredUsers = users.filter(user =>
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -25,15 +25,15 @@ export const UserManagement: React.FC = () => {
             <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
                 <div className="relative w-96">
                     <Search className="absolute left-3 top-2.5 h-5 w-5 text-slate-400" />
-                    <input 
-                        type="text" 
-                        placeholder="Search users by name or email..." 
+                    <input
+                        type="text"
+                        placeholder="Search users by name or email..."
                         className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-700 transition-colors shadow-sm flex items-center gap-2">
+                <button className="bg-[#E2000F] text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-[#c2000d] transition-colors shadow-sm flex items-center gap-2">
                     <Users className="h-4 w-4" />
                     Add New User
                 </button>
@@ -74,10 +74,9 @@ export const UserManagement: React.FC = () => {
                                     </td>
                                     <td className="p-4">
                                         <div className="flex items-center gap-2">
-                                            <div className={`w-2 h-2 rounded-full ${
-                                                user.riskProfile === 'High' ? 'bg-red-500' : 
+                                            <div className={`w-2 h-2 rounded-full ${user.riskProfile === 'High' ? 'bg-red-500' :
                                                 user.riskProfile === 'Medium' ? 'bg-amber-500' : 'bg-emerald-500'
-                                            }`}></div>
+                                                }`}></div>
                                             <span className="text-xs font-medium text-slate-700">{user.riskProfile} Risk</span>
                                         </div>
                                     </td>
@@ -108,7 +107,7 @@ export const UserManagement: React.FC = () => {
                                 <span className="text-sm text-slate-600">Modify Visual Rules</span>
                                 <input type="checkbox" defaultChecked={users.find(u => u.id === selectedUser)?.role === 'Admin'} className="toggle" />
                             </div>
-                             <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between">
                                 <span className="text-sm text-slate-600">Approve High-Risk Assets</span>
                                 <input type="checkbox" defaultChecked={users.find(u => u.id === selectedUser)?.role === 'Admin'} className="toggle" />
                             </div>

@@ -10,13 +10,13 @@ import { UserManagement } from './components/UserManagement';
 import { AdminDashboard } from './components/AdminDashboard';
 import { ToastProvider, useToast } from './components/Toast';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { AppView, CommunicationContext, Region, UploadState, AnalysisResult, BrandSettings, AssetType, UserRole, HistoryItem, FixIntensity, AudienceScope } from './types';
+import { AppView, CommunicationContext, UploadState, AnalysisResult, BrandSettings, AssetType, UserRole, HistoryItem, AudienceScope } from './types';
 import { analyzeContent } from './services/gemini';
 
 // Sample initial history (used only if storage is empty)
 const INITIAL_HISTORY: HistoryItem[] = [
     {
-        id: 1,
+        id: "1",
         filename: "Q3_Marketing_Strategy.pptx",
         type: AssetType.PRESENTATION,
         date: new Date(Date.now() - 86400000 * 2).toISOString(),
@@ -27,7 +27,7 @@ const INITIAL_HISTORY: HistoryItem[] = [
         topIssues: ["Font hierarchy inconsistent", "Minor tone drift"]
     },
     {
-        id: 2,
+        id: "2",
         filename: "Sales_Pitch_V2.docx",
         type: AssetType.DOCUMENT,
         date: new Date(Date.now() - 86400000 * 5).toISOString(),
@@ -188,7 +188,7 @@ function AppContent() {
 
             // Add to history with detailed metrics
             const newHistoryItem: HistoryItem = {
-                id: Date.now(),
+                id: Date.now().toString(),
                 filename: uploadState.file?.name || "Text Content",
                 type: uploadState.assetType,
                 date: new Date().toISOString(),

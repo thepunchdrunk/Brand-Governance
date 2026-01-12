@@ -1,5 +1,5 @@
 
-import { AssetType, IngestedAsset, Modality } from '../types';
+import { IngestedAsset, Modality } from '../types';
 import * as mammoth from 'mammoth';
 import JSZip from 'jszip';
 import * as pdfjs from 'pdfjs-dist';

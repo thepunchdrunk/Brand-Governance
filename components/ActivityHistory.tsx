@@ -68,7 +68,7 @@ export const ActivityHistory: React.FC<ActivityHistoryProps> = ({ history }) => 
                     </button>
                     <button
                         onClick={handleExportCSV}
-                        className="flex-1 md:flex-none px-4 py-2 bg-indigo-600 text-white font-medium text-sm rounded-lg hover:bg-indigo-700 flex items-center justify-center gap-2 shadow-sm"
+                        className="flex-1 md:flex-none px-4 py-2 bg-[#E2000F] text-white font-medium text-sm rounded-lg hover:bg-[#c2000d] flex items-center justify-center gap-2 shadow-sm"
                     >
                         <Download className="h-4 w-4" />
                         Export Log

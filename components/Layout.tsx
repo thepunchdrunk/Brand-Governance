@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ShieldCheck, FileText, BookOpen, History, Globe, Settings, Users, Lock, LogOut, SwitchCamera, LayoutDashboard } from 'lucide-react';
+import { ShieldCheck, FileText, BookOpen, History, Globe, Settings, Users, Lock, SwitchCamera, LayoutDashboard } from 'lucide-react';
 import { AppView, UserRole } from '../types';
 
 interface LayoutProps {
@@ -16,8 +16,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, setView, 
     <button
       onClick={() => setView(view)}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${currentView === view || (view === AppView.UPLOAD && currentView === AppView.RESULTS)
-          ? 'bg-[#E2000F] text-white shadow-lg shadow-red-900/20 font-medium'
-          : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+        ? 'bg-[#E2000F] text-white shadow-lg shadow-red-900/20 font-medium'
+        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
         }`}
     >
       <Icon className={`h-5 w-5 transition-colors ${currentView === view ? 'text-white' : 'text-slate-400 group-hover:text-[#E2000F]'

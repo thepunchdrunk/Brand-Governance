@@ -65,15 +65,15 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 // --- Individual Toast Item ---
 const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({ toast, onRemove }) => {
     const icons = {
-        success: <CheckCircle2 className="h-5 w-5 text-emerald-400" />,
-        error: <AlertCircle className="h-5 w-5 text-red-400" />,
-        info: <Info className="h-5 w-5 text-blue-400" />
+        success: <CheckCircle2 className="h-5 w-5 text-emerald-600" />,
+        error: <AlertCircle className="h-5 w-5 text-[#E2000F]" />,
+        info: <Info className="h-5 w-5 text-slate-600" />
     };
 
     const bgStyles = {
-        success: "bg-slate-900 border-emerald-500/30",
-        error: "bg-slate-900 border-red-500/30",
-        info: "bg-slate-900 border-blue-500/30"
+        success: "bg-white border-emerald-200 shadow-lg shadow-emerald-500/10",
+        error: "bg-white border-red-200 shadow-lg shadow-red-500/10",
+        info: "bg-white border-slate-200 shadow-lg shadow-slate-200/50"
     };
 
     return (
@@ -83,17 +83,17 @@ const ToastItem: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
             className={cn(
-                "pointer-events-auto min-w-[300px] max-w-md p-4 rounded-xl shadow-2xl border flex items-start gap-3 backdrop-blur-md",
+                "pointer-events-auto min-w-[300px] max-w-md p-4 rounded-xl shadow-xl border flex items-start gap-3",
                 bgStyles[toast.type]
             )}
         >
             <div className="mt-0.5">{icons[toast.type]}</div>
             <div className="flex-1">
-                <p className="text-sm font-medium text-white leading-relaxed">{toast.message}</p>
+                <p className="text-sm font-medium text-slate-900 leading-relaxed">{toast.message}</p>
             </div>
             <button
                 onClick={() => onRemove(toast.id)}
-                className="p-1 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors"
+                className="p-1 hover:bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
             >
                 <X className="h-4 w-4" />
             </button>

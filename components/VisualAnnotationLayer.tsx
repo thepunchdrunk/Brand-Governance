@@ -50,7 +50,6 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
     const [isPlaying, setIsPlaying] = useState(false);
     const [scale, setScale] = useState(1);
     const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
-    const [hoveredPageIndex, setHoveredPageIndex] = useState<number | null>(null);
 
     // PDF State
     const [numPages, setNumPages] = useState<number>(0);
@@ -159,12 +158,12 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
     return (
         <div
             ref={containerRef}
-            className={cn("relative w-full h-full bg-slate-950 overflow-hidden group select-none flex items-center justify-center font-sans", className)}
+            className={cn("relative w-full h-full bg-slate-100 overflow-hidden group select-none flex items-center justify-center font-sans", className)}
             onWheel={handleWheel}
         >
 
             {isDoc ? (
-                <div className="w-full h-full flex justify-center bg-slate-900/50 relative z-10 overflow-hidden">
+                <div className="w-full h-full flex justify-center bg-slate-50 relative z-10 overflow-hidden">
                     {useCarousel ? (
                         // CAROUSEL MODE (PDF native / PPTX visual slides)
                         <div className="relative w-full h-full flex items-center">
@@ -172,13 +171,13 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                             {/* NAVIGATION BUTTONS */}
                             <button
                                 onClick={() => scrollByPage('left')}
-                                className="absolute left-4 z-[200] p-2 rounded-full bg-black/50 text-white hover:bg-black/80 transition-colors backdrop-blur-sm"
+                                className="absolute left-4 z-[200] p-2 rounded-full bg-white text-slate-600 hover:bg-slate-100 transition-colors shadow-md border border-slate-200"
                             >
                                 <ChevronLeft className="w-6 h-6" />
                             </button>
                             <button
                                 onClick={() => scrollByPage('right')}
-                                className="absolute right-4 z-[200] p-2 rounded-full bg-black/50 text-white hover:bg-black/80 transition-colors backdrop-blur-sm"
+                                className="absolute right-4 z-[200] p-2 rounded-full bg-white text-slate-600 hover:bg-slate-100 transition-colors shadow-md border border-slate-200"
                             >
                                 <ChevronRight className="w-6 h-6" />
                             </button>
@@ -190,7 +189,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                     onLoadSuccess={onDocumentLoadSuccess}
                                     className="flex flex-row overflow-x-auto snap-x snap-mandatory gap-8 px-[10vw] py-24 items-center h-full w-full scrollbar-hide"
                                     inputRef={scrollContainerRef}
-                                    loading={<div className="text-white m-auto">Loading PDF...</div>}
+                                    loading={<div className="text-slate-500 m-auto font-medium">Loading PDF...</div>}
                                     error={<div className="text-red-500 m-auto p-4 bg-white/10 rounded">Failed to render PDF.</div>}
                                 >
                                     {Array.from(new Array(numPages), (_, index) => (
@@ -200,7 +199,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                             className="relative shadow-2xl snap-center shrink-0 flex items-center justify-center p-2 group/page"
                                         >
                                             {/* PAGE NUMBER BADGE */}
-                                            <div className="absolute top-4 left-4 z-[150] bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
+                                            <div className="absolute top-4 left-4 z-[150] bg-white text-slate-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-slate-200">
                                                 Page {index + 1}
                                             </div>
 
@@ -246,17 +245,22 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                                                             initial={{ opacity: 0, y: 10, scale: 0.9 }}
                                                                             animate={{ opacity: 1, y: -25, scale: 1 }}
                                                                             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                                                                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900/95 backdrop-blur-md border border-white/10 rounded-lg p-3 shadow-2xl z-[200]"
+                                                                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-white border border-slate-200 rounded-xl shadow-xl p-4 z-[200] text-left"
                                                                         >
-                                                                            <div className="flex flex-col gap-1">
-                                                                                <div className="flex items-center gap-2">
-                                                                                    <span className={cn("w-2 h-2 rounded-full", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-blue-500")} />
-                                                                                    <span className="text-xs font-bold text-white uppercase tracking-wider">{issue.severity} Severity</span>
-                                                                                </div>
-                                                                                <p className="text-xs text-slate-200 font-medium leading-relaxed line-clamp-3">{issue.description}</p>
+                                                                            <div className={cn("absolute top-0 bottom-0 left-0 w-1", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />
+                                                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
+                                                                                <span className="text-[10px] font-black uppercase text-slate-400">#{globalIndex + 1}</span>
+                                                                                <span className="text-xs font-bold text-slate-900 uppercase truncate">{issue.category}</span>
                                                                             </div>
+                                                                            <p className="text-xs text-slate-600 font-medium leading-relaxed mb-3">{issue.description}</p>
+                                                                            {issue.fix && (
+                                                                                <div className="bg-slate-50 border border-slate-200 rounded p-2 flex gap-2 items-start">
+                                                                                    <Zap className="w-3 h-3 text-emerald-600 mt-0.5 shrink-0" />
+                                                                                    <div className="text-[10px] text-slate-600 leading-tight font-mono">{issue.fix}</div>
+                                                                                </div>
+                                                                            )}
                                                                             {/* Arrow */}
-                                                                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-slate-900/95" />
+                                                                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white drop-shadow-sm" />
                                                                         </motion.div>
                                                                     )}
                                                                 </AnimatePresence>
@@ -281,7 +285,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                             className="relative shadow-2xl snap-center shrink-0 flex items-center justify-center p-2 group/page"
                                         >
                                             {/* SLIDE NUMBER BADGE */}
-                                            <div className="absolute top-4 left-4 z-[150] bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-sm">
+                                            <div className="absolute top-4 left-4 z-[150] bg-white text-slate-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-md border border-slate-200">
                                                 Slide {index + 1}
                                             </div>
 
@@ -329,17 +333,22 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                                                             initial={{ opacity: 0, y: 10, scale: 0.9 }}
                                                                             animate={{ opacity: 1, y: -25, scale: 1 }}
                                                                             exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                                                                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900/95 backdrop-blur-md border border-white/10 rounded-lg p-3 shadow-2xl z-[200]"
+                                                                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-white border border-slate-200 rounded-xl shadow-xl p-4 z-[200] text-left"
                                                                         >
-                                                                            <div className="flex flex-col gap-1">
-                                                                                <div className="flex items-center gap-2">
-                                                                                    <span className={cn("w-2 h-2 rounded-full", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-blue-500")} />
-                                                                                    <span className="text-xs font-bold text-white uppercase tracking-wider">{issue.severity} Severity</span>
-                                                                                </div>
-                                                                                <p className="text-xs text-slate-200 font-medium leading-relaxed line-clamp-3">{issue.description}</p>
+                                                                            <div className={cn("absolute top-0 bottom-0 left-0 w-1", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />
+                                                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
+                                                                                <span className="text-[10px] font-black uppercase text-slate-400">#{globalIndex + 1}</span>
+                                                                                <span className="text-xs font-bold text-slate-900 uppercase truncate">{issue.category}</span>
                                                                             </div>
+                                                                            <p className="text-xs text-slate-600 font-medium leading-relaxed mb-3">{issue.description}</p>
+                                                                            {issue.fix && (
+                                                                                <div className="bg-slate-50 border border-slate-200 rounded p-2 flex gap-2 items-start">
+                                                                                    <Zap className="w-3 h-3 text-emerald-600 mt-0.5 shrink-0" />
+                                                                                    <div className="text-[10px] text-slate-600 leading-tight font-mono">{issue.fix}</div>
+                                                                                </div>
+                                                                            )}
                                                                             {/* Arrow */}
-                                                                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-slate-900/95" />
+                                                                            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white drop-shadow-sm" />
                                                                         </motion.div>
                                                                     )}
                                                                 </AnimatePresence>
@@ -463,19 +472,22 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                                 </div>
                                                 {(isSelected || hoveredMarkerId === issue.id) && (
                                                     <div className={cn("absolute top-1/2 -translate-y-1/2 w-64 z-50 pointer-events-none pl-4", isRightSide ? "right-full pr-4 pl-0" : "left-full")}>
-                                                        <motion.div initial={{ opacity: 0, x: isRightSide ? 10 : -10, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-4 text-left relative overflow-hidden">
+                                                        <motion.div initial={{ opacity: 0, x: isRightSide ? 10 : -10, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} className="bg-white border border-slate-200 rounded-xl shadow-xl p-4 text-left relative overflow-hidden">
                                                             <div className={cn("absolute top-0 bottom-0 left-0 w-1", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />
-                                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
+                                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
                                                                 <span className="text-[10px] font-black uppercase text-slate-400">#{globalIndex + 1}</span>
-                                                                <span className="text-xs font-bold text-white uppercase truncate">{issue.category}</span>
+                                                                <span className="text-xs font-bold text-slate-900 uppercase truncate">{issue.category}</span>
                                                             </div>
-                                                            <p className="text-xs text-slate-200 font-medium leading-relaxed mb-3">{issue.description}</p>
-                                                            <div className="flex items-center gap-2">
-                                                                <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm", issue.severity === 'High' ? "bg-red-500/20 text-red-400" : issue.severity === 'Medium' ? "bg-amber-500/20 text-amber-400" : "bg-blue-500/20 text-blue-400")}>
-                                                                    {issue.severity} Severity
-                                                                </span>
+                                                            <p className="text-xs text-slate-600 font-medium leading-relaxed mb-3">{issue.description}</p>
+                                                            {issue.fix && (
+                                                                <div className="bg-slate-50 border border-slate-200 rounded p-2 flex gap-2 items-start">
+                                                                    <Zap className="w-3 h-3 text-emerald-600 mt-0.5 shrink-0" />
+                                                                    <div className="text-[10px] text-slate-600 leading-tight font-mono">{issue.fix}</div>
+                                                                </div>
+                                                            )}
+                                                            <div className="flex items-center gap-2 mt-2">
                                                                 {issue.timestamp !== undefined && (
-                                                                    <span className="text-[10px] bg-white/5 text-slate-400 px-2 py-0.5 rounded-full font-medium">
+                                                                    <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-medium border border-slate-200">
                                                                         {Math.floor(issue.timestamp / 60)}:{(issue.timestamp % 60).toString().padStart(2, '0')}
                                                                     </span>
                                                                 )}
@@ -515,8 +527,8 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                         >
                                             <AnimatePresence>
                                                 {hoveredMarkerId === issue.id && (
-                                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: -25 }} exit={{ opacity: 0, y: 10 }} className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-900/90 backdrop-blur border border-white/10 rounded-md p-2 shadow-xl pointer-events-none">
-                                                        <p className="text-[10px] text-white line-clamp-2">{issue.description}</p>
+                                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: -25 }} exit={{ opacity: 0, y: 10 }} className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-white border border-slate-200 rounded-md p-2 shadow-xl pointer-events-none">
+                                                        <p className="text-[10px] text-slate-600 line-clamp-2">{issue.description}</p>
                                                     </motion.div>
                                                 )}
                                             </AnimatePresence>
@@ -528,7 +540,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
 
                             {/* CENTER PLAY BUTTON OVERLAY */}
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
-                                {!isPlaying && <div className="bg-black/40 rounded-full p-4 backdrop-blur-sm shadow-2xl scale-150"><Play className="w-8 h-8 text-white fill-white" /></div>}
+                                {!isPlaying && <div className="bg-white/90 rounded-full p-4 shadow-2xl scale-150 border border-slate-200"><Play className="w-8 h-8 text-[#E2000F] fill-[#E2000F]" /></div>}
                             </div>
                         </div>
                     ) : (
@@ -573,14 +585,19 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                         </div>
                                         {(isSelected || hoveredMarkerId === issue.id) && (
                                             <div className={cn("absolute top-1/2 -translate-y-1/2 w-64 z-50 pointer-events-none pl-4", isRightSide ? "right-full pr-4 pl-0" : "left-full")}>
-                                                <motion.div initial={{ opacity: 0, x: isRightSide ? 10 : -10, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-4 text-left relative overflow-hidden">
+                                                <motion.div initial={{ opacity: 0, x: isRightSide ? 10 : -10, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} className="bg-white border border-slate-200 rounded-xl shadow-xl p-4 text-left relative overflow-hidden">
                                                     <div className={cn("absolute top-0 bottom-0 left-0 w-1", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />
-                                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
+                                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
                                                         <span className="text-[10px] font-black uppercase text-slate-400">#{globalIndex + 1}</span>
-                                                        <span className="text-xs font-bold text-white uppercase truncate">{issue.category}</span>
+                                                        <span className="text-xs font-bold text-slate-900 uppercase truncate">{issue.category}</span>
                                                     </div>
-                                                    <p className="text-xs text-slate-200 font-medium leading-relaxed mb-3">{issue.description}</p>
-                                                    <div className="bg-white/5 rounded p-2 flex gap-2 items-start"><Zap className="w-3 h-3 text-emerald-400 mt-0.5 shrink-0" /><div className="text-[10px] text-emerald-100/80 leading-tight font-mono">{issue.fix}</div></div>
+                                                    <p className="text-xs text-slate-600 font-medium leading-relaxed mb-3">{issue.description}</p>
+                                                    {issue.fix && (
+                                                        <div className="bg-slate-50 border border-slate-200 rounded p-2 flex gap-2 items-start">
+                                                            <Zap className="w-3 h-3 text-emerald-600 mt-0.5 shrink-0" />
+                                                            <div className="text-[10px] text-slate-600 leading-tight font-mono">{issue.fix}</div>
+                                                        </div>
+                                                    )}
                                                 </motion.div>
                                             </div>
                                         )}
