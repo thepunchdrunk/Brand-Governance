@@ -433,7 +433,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                             />
 
                             {/* VIDEO-ONLY ANNOTATION OVERLAY (Attached to video bounds) */}
-                            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
+                            <div className="absolute inset-0 pointer-events-none rounded-lg">
                                 <AnimatePresence>
                                     {issues.filter(i => i.boundingBox).map((issue) => {
                                         const isSelected = selectedIssueId === issue.id;
@@ -498,7 +498,9 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                         const rect = e.currentTarget.getBoundingClientRect();
                                         const x = e.clientX - rect.left;
                                         const percentage = Math.max(0, Math.min(1, x / rect.width));
-                                        videoRef.current.currentTime = percentage * duration;
+                                        const newTime = percentage * duration;
+                                        videoRef.current.currentTime = newTime;
+                                        setCurrentTime(newTime);
                                     }}
                                 >
                                     <div className="absolute top-0 left-0 h-full bg-purple-500 rounded-full pointer-events-none" style={{ width: `${(currentTime / (duration || 1)) * 100}%` }} />
@@ -521,9 +523,12 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                         </div>
                                     ))}
                                 </div>
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    {!isPlaying && <div className="bg-black/40 rounded-full p-4 backdrop-blur-sm"><Play className="w-8 h-8 text-white fill-white" /></div>}
-                                </div>
+
+                            </div>
+
+                            {/* CENTER PLAY BUTTON OVERLAY */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-40">
+                                {!isPlaying && <div className="bg-black/40 rounded-full p-4 backdrop-blur-sm shadow-2xl scale-150"><Play className="w-8 h-8 text-white fill-white" /></div>}
                             </div>
                         </div>
                     ) : (
