@@ -370,9 +370,10 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                 {issues.filter(i => i.boundingBox).length > 0 && (
                                     <div className="absolute inset-0 w-full h-full pointer-events-none z-50">
                                         <AnimatePresence>
-                                            {issues.filter(i => i.boundingBox).map((issue, index) => {
+                                            {issues.filter(i => i.boundingBox).map((issue) => {
                                                 const box = issue.boundingBox;
                                                 if (!box) return null;
+                                                const globalIndex = issues.findIndex(x => x.id === issue.id);
                                                 const centerX = box.x + (box.width / 2);
                                                 const centerY = box.y + (box.height / 2);
                                                 const isSelected = selectedIssueId === issue.id;
@@ -387,7 +388,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                                         onClick={(e) => { e.stopPropagation(); onIssueSelect(issue.id); }}
                                                     >
                                                         <div className={cn("w-6 h-6 rounded-full flex items-center justify-center shadow-lg cursor-pointer pointer-events-auto transition-transform hover:scale-110 relative", isSelected ? "ring-2 ring-offset-1 ring-blue-500 scale-125" : "", issue.severity === 'High' ? "bg-red-500 text-white" : issue.severity === 'Medium' ? "bg-amber-500 text-white" : "bg-blue-500 text-white")}>
-                                                            <span className="text-[10px] font-bold">{index + 1}</span>
+                                                            <span className="text-[10px] font-bold">{globalIndex + 1}</span>
                                                         </div>
                                                     </motion.div>
                                                 );
@@ -480,14 +481,20 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                     {/* ANNOTATION OVERLAY (Zoomable) */}
                     <div className="absolute inset-0 w-full h-full pointer-events-none">
                         <AnimatePresence>
-                            {issues.filter(i => i.boundingBox).map((issue, index) => {
-                                if (isVideo && (!issue.timestamp || Math.abs(currentTime - issue.timestamp) > 2.0)) return null;
+                            {issues.filter(i => i.boundingBox).map((issue) => {
+                                const isSelected = selectedIssueId === issue.id;
+                                // Robust condition: Show if not video OR if selected OR if within 3s window (even if at 0:00)
+                                const isVideoMatch = isVideo && (isSelected || (issue.timestamp !== undefined && Math.abs(currentTime - issue.timestamp) < 3.0));
+
+                                if (isVideo && !isVideoMatch) return null;
+
                                 const box = issue.boundingBox;
                                 if (!box) return null;
+
+                                const globalIndex = issues.findIndex(x => x.id === issue.id);
                                 const centerX = box.x + (box.width / 2);
                                 const centerY = box.y + (box.height / 2);
                                 const isRightSide = centerX > 50;
-                                const isSelected = selectedIssueId === issue.id;
 
                                 return (
                                     <motion.div
@@ -500,7 +507,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                         onClick={(e) => { e.stopPropagation(); onIssueSelect(issue.id); }}
                                     >
                                         <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-all duration-300 relative group/dot", isSelected ? "scale-125 ring-2 ring-white z-50 text-white" : "scale-100 hover:scale-110 opacity-90 text-white", issue.severity === 'High' ? "bg-red-600" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-600")}>
-                                            <span className="text-xs font-black">{index + 1}</span>
+                                            <span className="text-xs font-black">{globalIndex + 1}</span>
                                             {(isSelected || issue.severity === 'High') && <div className={cn("absolute inset-0 rounded-full animate-ping opacity-40 will-change-transform", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />}
                                         </div>
                                         {(isSelected || hoveredMarkerId === issue.id) && (
@@ -508,7 +515,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                                 <motion.div initial={{ opacity: 0, x: isRightSide ? 10 : -10, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-4 text-left relative overflow-hidden">
                                                     <div className={cn("absolute top-0 bottom-0 left-0 w-1", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />
                                                     <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
-                                                        <span className="text-[10px] font-black uppercase text-slate-400">#{index + 1}</span>
+                                                        <span className="text-[10px] font-black uppercase text-slate-400">#{globalIndex + 1}</span>
                                                         <span className="text-xs font-bold text-white uppercase truncate">{issue.category}</span>
                                                     </div>
                                                     <p className="text-xs text-slate-200 font-medium leading-relaxed mb-3">{issue.description}</p>
