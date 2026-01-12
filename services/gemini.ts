@@ -1,4 +1,5 @@
 
+// Triggering fresh build for API key secret integration
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { CommunicationContext, Region, AnalysisResult, BrandSettings, AssetType, FixIntensity } from '../types';
 
