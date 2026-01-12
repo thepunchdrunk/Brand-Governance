@@ -11,12 +11,13 @@ import { VisualAnnotationLayer } from './VisualAnnotationLayer';
 import { cn } from '../utils';
 
 // Category Color Mapping
+// Category Color Mapping
 const getCategoryColor = (category: string) => {
     switch (category) {
-        case 'Brand': return { bg: 'bg-indigo-500', text: 'text-indigo-100', border: 'border-indigo-500', shadow: 'shadow-indigo-500/20' };
-        case 'Compliance': return { bg: 'bg-rose-500', text: 'text-rose-100', border: 'border-rose-500', shadow: 'shadow-rose-500/20' };
-        case 'Cultural': return { bg: 'bg-teal-500', text: 'text-teal-100', border: 'border-teal-500', shadow: 'shadow-teal-500/20' };
-        default: return { bg: 'bg-slate-500', text: 'text-slate-100', border: 'border-slate-500', shadow: 'shadow-slate-500/20' };
+        case 'Brand': return { bg: 'bg-[#E2000F]', text: 'text-white', border: 'border-[#E2000F]', shadow: 'shadow-red-500/20' };
+        case 'Compliance': return { bg: 'bg-slate-700', text: 'text-slate-100', border: 'border-slate-700', shadow: 'shadow-slate-500/20' };
+        case 'Cultural': return { bg: 'bg-slate-500', text: 'text-slate-100', border: 'border-slate-500', shadow: 'shadow-slate-500/20' };
+        default: return { bg: 'bg-slate-400', text: 'text-white', border: 'border-slate-400', shadow: 'shadow-slate-400/20' };
     }
 };
 
@@ -71,8 +72,8 @@ const ScoreRing = ({ score }: { score: number }) => {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className={cn("text-xl font-black",
-                    score === 100 ? "text-emerald-400" :
-                        score >= 50 ? "text-amber-400" : "text-red-400"
+                    score === 100 ? "text-emerald-600" :
+                        score >= 50 ? "text-amber-500" : "text-[#E2000F]"
                 )}>
                     {score}
                 </span>
