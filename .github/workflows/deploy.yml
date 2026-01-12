@@ -27,10 +27,14 @@ jobs:
         run: npm ci
 
       - name: Create .env file
-        run: echo "VITE_GEMINI_API_KEY=${{ secrets.VITE_GEMINI_API_KEY }}" > .env
+        run: |
+          echo "VITE_GEMINI_API_KEY=${{ secrets.VITE_GEMINI_API_KEY }}" > .env
+          echo "VITE_BUILD_TIME=$(date)" >> .env
 
       - name: Build
         run: npm run build
+        env:
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

@@ -83,6 +83,11 @@ function AppContent() {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [progress, setProgress] = useState(0);
     const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+    const buildTimestamp = "2026-01-12 18:05"; // Hardcoded timestamp for verification
+
+    useEffect(() => {
+        addToast(`Deployment Version: ${buildTimestamp}`, "info");
+    }, []);
 
     // -- PERSISTENCE LAYER --
     const [history, setHistory] = useState<HistoryItem[]>(() => {

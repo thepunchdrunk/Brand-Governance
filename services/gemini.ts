@@ -4,9 +4,15 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { CommunicationContext, Region, AnalysisResult, BrandSettings, AssetType, FixIntensity } from '../types';
 
 const getClient = () => {
+  // Debug log (safe: only keys, no values)
+  if (import.meta.env.PROD) {
+    const keys = Object.keys(import.meta.env).filter(k => k.startsWith('VITE_'));
+    console.log(`[Env Debug] Mode: ${import.meta.env.MODE}, Keys found: ${keys.join(', ') || 'none'}`);
+  }
+
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
-    throw new Error("API Key not found. Please ensure VITE_GEMINI_API_KEY is set in .env.local");
+    throw new Error(`API Key not found in ${import.meta.env.MODE} mode. Please ensure VITE_GEMINI_API_KEY is set in GitHub Secrets for production or .env.local for development.`);
   }
   return new GoogleGenAI({ apiKey });
 };
