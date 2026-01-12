@@ -413,7 +413,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                 >
                     {/* MEDIA CONTENT */}
                     {isVideo ? (
-                        <div className="relative group/video">
+                        <div className="relative group/video inline-block max-w-full">
                             {/* Video Player */}
                             <video
                                 ref={videoRef}
@@ -431,6 +431,63 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                 crossOrigin="anonymous"
                                 playsInline
                             />
+
+                            {/* VIDEO-ONLY ANNOTATION OVERLAY (Attached to video bounds) */}
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
+                                <AnimatePresence>
+                                    {issues.filter(i => i.boundingBox).map((issue) => {
+                                        const isSelected = selectedIssueId === issue.id;
+                                        const isMatch = isSelected || (issue.timestamp !== undefined && Math.abs(currentTime - issue.timestamp) < 3.0);
+                                        if (!isMatch) return null;
+                                        const box = issue.boundingBox;
+                                        if (!box) return null;
+                                        const globalIndex = issues.findIndex(x => x.id === issue.id);
+                                        const centerX = box.x + (box.width / 2);
+                                        const centerY = box.y + (box.height / 2);
+                                        const isRightSide = centerX > 50;
+                                        return (
+                                            <motion.div
+                                                key={issue.id}
+                                                initial={{ opacity: 0, scale: 0 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0 }}
+                                                style={{ left: `${centerX}%`, top: `${centerY}%` }}
+                                                className="absolute z-30 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
+                                                onClick={(e) => { e.stopPropagation(); onIssueSelect(issue.id); }}
+                                                onMouseEnter={() => setHoveredMarkerId(issue.id)}
+                                                onMouseLeave={() => setHoveredMarkerId(null)}
+                                            >
+                                                <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-all duration-300 relative group/dot", isSelected ? "scale-125 ring-2 ring-white z-50 text-white" : "scale-100 hover:scale-110 opacity-90 text-white", issue.severity === 'High' ? "bg-red-600" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-600")}>
+                                                    <span className="text-xs font-black">{globalIndex + 1}</span>
+                                                    {(isSelected || issue.severity === 'High') && <div className={cn("absolute inset-0 rounded-full animate-ping opacity-40 will-change-transform", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />}
+                                                </div>
+                                                {(isSelected || hoveredMarkerId === issue.id) && (
+                                                    <div className={cn("absolute top-1/2 -translate-y-1/2 w-64 z-50 pointer-events-none pl-4", isRightSide ? "right-full pr-4 pl-0" : "left-full")}>
+                                                        <motion.div initial={{ opacity: 0, x: isRightSide ? 10 : -10, scale: 0.95 }} animate={{ opacity: 1, x: 0, scale: 1 }} className="bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl p-4 text-left relative overflow-hidden">
+                                                            <div className={cn("absolute top-0 bottom-0 left-0 w-1", issue.severity === 'High' ? "bg-red-500" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-500")} />
+                                                            <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/10">
+                                                                <span className="text-[10px] font-black uppercase text-slate-400">#{globalIndex + 1}</span>
+                                                                <span className="text-xs font-bold text-white uppercase truncate">{issue.category}</span>
+                                                            </div>
+                                                            <p className="text-xs text-slate-200 font-medium leading-relaxed mb-3">{issue.description}</p>
+                                                            <div className="flex items-center gap-2">
+                                                                <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm", issue.severity === 'High' ? "bg-red-500/20 text-red-400" : issue.severity === 'Medium' ? "bg-amber-500/20 text-amber-400" : "bg-blue-500/20 text-blue-400")}>
+                                                                    {issue.severity} Severity
+                                                                </span>
+                                                                {issue.timestamp !== undefined && (
+                                                                    <span className="text-[10px] bg-white/5 text-slate-400 px-2 py-0.5 rounded-full font-medium">
+                                                                        {Math.floor(issue.timestamp / 60)}:{(issue.timestamp % 60).toString().padStart(2, '0')}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </motion.div>
+                                                    </div>
+                                                )}
+                                            </motion.div>
+                                        );
+                                    })}
+                                </AnimatePresence>
+                            </div>
                             {/* Controls Overlay */}
                             <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover/video:opacity-100 transition-opacity duration-300 flex flex-col gap-4 rounded-b-lg">
                                 {/* (Condensed Controls Logic) */}
@@ -450,7 +507,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                         <div key={issue.id}
                                             className={cn("absolute top-1/2 -translate-y-1/2 w-[2px] h-4 cursor-pointer transition-all z-20", issue.severity === 'High' ? "bg-red-500" : "bg-blue-500")}
                                             style={{ left: `${(issue.timestamp! / (duration || 1)) * 100}%` }}
-                                            onClick={(e) => { e.stopPropagation(); handleSeekToIssue(issue); }}
+                                            onClick={(e) => { e.stopPropagation(); if (videoRef.current) videoRef.current.currentTime = issue.timestamp!; onIssueSelect(issue.id); }}
                                             onMouseEnter={() => setHoveredMarkerId(issue.id)}
                                             onMouseLeave={() => setHoveredMarkerId(null)}
                                         >
@@ -483,10 +540,7 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                         <AnimatePresence>
                             {issues.filter(i => i.boundingBox).map((issue) => {
                                 const isSelected = selectedIssueId === issue.id;
-                                // Robust condition: Show if not video OR if selected OR if within 3s window (even if at 0:00)
-                                const isVideoMatch = isVideo && (isSelected || (issue.timestamp !== undefined && Math.abs(currentTime - issue.timestamp) < 3.0));
-
-                                if (isVideo && !isVideoMatch) return null;
+                                if (isVideo) return null; // Handled by video-specific overlay above
 
                                 const box = issue.boundingBox;
                                 if (!box) return null;
@@ -505,6 +559,8 @@ export const VisualAnnotationLayer: React.FC<VisualAnnotationLayerProps> = ({
                                         style={{ left: `${centerX}%`, top: `${centerY}%` }}
                                         className="absolute z-30 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
                                         onClick={(e) => { e.stopPropagation(); onIssueSelect(issue.id); }}
+                                        onMouseEnter={() => setHoveredMarkerId(issue.id)}
+                                        onMouseLeave={() => setHoveredMarkerId(null)}
                                     >
                                         <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shadow-lg cursor-pointer transition-all duration-300 relative group/dot", isSelected ? "scale-125 ring-2 ring-white z-50 text-white" : "scale-100 hover:scale-110 opacity-90 text-white", issue.severity === 'High' ? "bg-red-600" : issue.severity === 'Medium' ? "bg-amber-500" : "bg-indigo-600")}>
                                             <span className="text-xs font-black">{globalIndex + 1}</span>
